@@ -15,6 +15,8 @@ type Bread = {
   texture?: string | null
   category?: string | null
   ingredients?: string | null
+  imageUrl?: string | null
+  status: string
 }
 
 type Filters = {
