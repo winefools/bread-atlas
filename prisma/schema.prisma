@@ -26,11 +26,12 @@ model Bread {
   completedAt  DateTime?
 
   // Advanced recipe fields (JSON)
-  bakersPercent            Json?
-  ingredientsFor1kgFlourG  Json?
-  processSteps             Json?
-  bakeParams               Json?
-  notes                    Json?
+  // Note: SQLite connector does not support Json. Use String for dev; switch to Json on Postgres.
+  bakersPercent            String?
+  ingredientsFor1kgFlourG  String?
+  processSteps             String?
+  bakeParams               String?
+  notes                    String?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
