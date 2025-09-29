@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { parse } from "csv-parse/sync"
-import { prisma } from "@/db/client"
 import { requireAdmin } from "@/lib/auth"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export const config = {
   api: {
@@ -21,6 +21,13 @@ function readStream(req: NextApiRequest): Promise<Buffer> {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" })
   if (!requireAdmin(req)) return res.status(401).json({ error: "Unauthorized" })
+
+  if (isDbDisabled()) {
+    return res.status(503).json({ error: "Database is disabled" })
+  }
+
+  const { prisma } = await import("@/db/client")
+
   try {
     const buf = await readStream(req)
     const csvText = buf.toString("utf8")

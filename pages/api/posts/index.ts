@@ -1,8 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { prisma } from "@/db/client"
 import { requireAdmin } from "@/lib/auth"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (isDbDisabled()) {
+    if (req.method === "GET") {
+      return res.status(200).json([])
+    }
+    return res.status(503).json({ error: "Database is disabled" })
+  }
+
+  const { prisma } = await import("@/db/client")
   switch (req.method) {
     case 'GET': {
       const posts = await prisma.post.findMany({ orderBy: { createdAt: 'desc' } })

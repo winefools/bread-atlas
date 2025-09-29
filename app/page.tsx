@@ -1,16 +1,20 @@
 import Link from "next/link"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   let total = 0
   let completed = 0
-  try {
-    const { prisma } = await import("@/db/client")
-    total = await prisma.bread.count()
-    completed = await prisma.bread.count({ where: { status: "completed" } })
-  } catch (_) {
-    // DB not configured: show zeros
+
+  if (!isDbDisabled()) {
+    try {
+      const { prisma } = await import("@/db/client")
+      total = await prisma.bread.count()
+      completed = await prisma.bread.count({ where: { status: "completed" } })
+    } catch (_) {
+      // DB not configured: show zeros
+    }
   }
   const target = 200
 

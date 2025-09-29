@@ -1,26 +1,30 @@
 export const dynamic = 'force-dynamic'
 import type { BreadDTO } from "@/types/models"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export default async function DashboardPage() {
   let breads: BreadDTO[] = []
-  try {
-    const { prisma } = await import("@/db/client")
-    breads = await prisma.bread.findMany({
-      select: {
-        id: true,
-        name: true,
-        origin: true,
-        fermentation: true,
-        texture: true,
-        category: true,
-        ingredients: true,
-        description: true,
-        imageUrl: true,
-        status: true,
-      },
-    })
-  } catch (_) {
-    breads = []
+
+  if (!isDbDisabled()) {
+    try {
+      const { prisma } = await import("@/db/client")
+      breads = await prisma.bread.findMany({
+        select: {
+          id: true,
+          name: true,
+          origin: true,
+          fermentation: true,
+          texture: true,
+          category: true,
+          ingredients: true,
+          description: true,
+          imageUrl: true,
+          status: true,
+        },
+      })
+    } catch (_) {
+      breads = []
+    }
   }
   const counts = breads.reduce((acc: Record<string, number>, b: BreadDTO) => {
     const c = (b.origin || "Unknown").trim()

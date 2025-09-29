@@ -1,10 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { prisma } from "@/db/client"
 import { requireAdmin } from "@/lib/auth"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const id = Number(req.query.id)
   if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid id' })
+
+  if (isDbDisabled()) {
+    if (req.method === "GET") {
+      return res.status(404).json({ error: "Not found" })
+    }
+    return res.status(503).json({ error: "Database is disabled" })
+  }
+
+  const { prisma } = await import("@/db/client")
   switch (req.method) {
     case 'GET': {
       const post = await prisma.post.findUnique({ where: { id } })

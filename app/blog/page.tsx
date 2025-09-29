@@ -1,13 +1,17 @@
 export const dynamic = 'force-dynamic'
 import type { PostDTO } from "@/types/models"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export default async function BlogPage() {
   let posts: PostDTO[] = []
-  try {
-    const { prisma } = await import("@/db/client")
-    posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } })
-  } catch (_) {
-    posts = []
+
+  if (!isDbDisabled()) {
+    try {
+      const { prisma } = await import("@/db/client")
+      posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } })
+    } catch (_) {
+      posts = []
+    }
   }
   return (
     <div className="space-y-4">

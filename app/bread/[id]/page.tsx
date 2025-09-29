@@ -1,10 +1,21 @@
-import { prisma } from "@/db/client"
+export const dynamic = 'force-dynamic'
 import { Badge } from "@/components/ui/badge"
+import { isDbDisabled } from "@/lib/featureFlags"
 
 export default async function BreadDetail({ params }: { params: { id: string } }) {
   const id = Number(params.id)
-  const bread = await prisma.bread.findUnique({ where: { id } })
-  if (!bread) return <div>Not found</div>
+  let bread: any = null
+
+  if (!isDbDisabled()) {
+    try {
+      const { prisma } = await import("@/db/client")
+      bread = await prisma.bread.findUnique({ where: { id } })
+    } catch (_) {
+      bread = null
+    }
+  }
+
+  if (!bread) return <div>Not found or database not configured.</div>
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,4 +65,3 @@ export default async function BreadDetail({ params }: { params: { id: string } }
     </div>
   )
 }
-

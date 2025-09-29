@@ -17,7 +17,8 @@
 ## 환경 변수
 `.env` 예시는 `.env.example` 참고
 ```
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="file:./dev.db"  # Option A: PostgreSQL URL 권장 / Option B: 임시 SQLite
+DISABLE_DB="true"              # DB 완전 비활성화 모드 (홈페이지 보장 렌더용)
 JWT_SECRET="change_me_super_secret"
 ADMIN_PASSWORD="set_a_strong_admin_password"
 ```
@@ -52,6 +53,7 @@ npm run dev
 - `POST /api/admin/upload`: CSV 업로드(멀티파트), 컬럼 매핑: `name,origin,fermentation,texture,category,ingredients,description,image_url`
 - `POST /api/admin/upload-image`: 이미지 업로드 → Supabase Storage에 저장 후 공개 URL 반환 (관리자 전용)
 - `GET/POST /api/posts`, `GET/PUT/DELETE /api/posts/[id]`: Blog CRUD (관리자 전용 for mutations)
+- `GET /api/health`: 헬스체크 - 환경변수 상태, DB 연결 상태 확인
 
 ## 메모
 - 현재 이미지는 `image_url` 문자열로만 저장 (추후 Supabase Storage/S3 연동 예정)
@@ -59,10 +61,21 @@ npm run dev
 - PostgreSQL 전환 시 `datasource db`만 교체 후 마이그레이션 진행
 
 ## 배포 (Vercel) 권장 구성
-- 개발: SQLite 사용 OK.
-- 프로덕션(Vercel): 서버리스에서 SQLite 파일은 영속성이 부족합니다. `DATABASE_URL`을 PostgreSQL로 전환(예: Vercel Postgres/Neon/Supabase Postgres) 후 `prisma migrate deploy` 사용을 권장합니다.
+
+### Option A: 프로덕션 (PostgreSQL 권장)
+- 서버리스에서 SQLite 파일은 영속성이 부족합니다. `DATABASE_URL`을 PostgreSQL로 전환(예: Vercel Postgres/Neon/Supabase Postgres) 후 `prisma migrate deploy` 사용을 권장합니다.
 - 환경변수: `JWT_SECRET`, `ADMIN_PASSWORD`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_BUCKET` 설정.
-- Supabase Storage: `bread-images` 버킷 생성 후 공개 설정(또는 서명 URL 사용). 본 저장소는 서버측에서 Service Role Key로 업로드하고, Public URL을 반환합니다.
+- Supabase Storage: `bread-images` 버킷 생성 후 공개 설정(또는 서명 URL 사용).
+
+### Option B: 임시 배포 (DB 없이 홈페이지 우선 렌더)
+홈페이지가 반드시 렌더되도록 안정화하려면:
+1. Vercel 환경변수에 `DISABLE_DB=true` 설정
+2. 선택적으로 `DATABASE_URL=file:./dev.db` 설정 (SQLite 임시 사용)
+3. Deploy (빌드 캐시 Clear 옵션 사용)
+4. `/api/health` 엔드포인트로 환경 상태 확인
+5. 홈페이지가 정상 렌더되면 `DISABLE_DB`를 제거하고 PostgreSQL 연결 진행
+
+**주의**: `DISABLE_DB=true` 시 모든 DB 기능이 비활성화되며 빈 데이터/placeholder를 표시합니다.
 
 ## 라우트 보호
 - `middleware.ts`가 `/admin/*` 접근 시 JWT 토큰을 검증, 미인증 사용자는 `/admin/login`으로 리다이렉트.
