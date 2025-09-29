@@ -1,10 +1,10 @@
-import { prisma } from "@/db/client"
 export const dynamic = 'force-dynamic'
 import type { BreadDTO } from "@/types/models"
 
 export default async function DashboardPage() {
   let breads: BreadDTO[] = []
   try {
+    const { prisma } = await import("@/db/client")
     breads = await prisma.bread.findMany({
       select: {
         id: true,
