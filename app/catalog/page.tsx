@@ -7,18 +7,29 @@ import { Select } from "@/components/ui/select"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
+type Bread = {
+  id: number
+  name: string
+  origin?: string | null
+  fermentation?: string | null
+  texture?: string | null
+  category?: string | null
+  ingredients?: string | null
+}
+
 export default function CatalogPage() {
-  const { data: breads = [] } = useSWR("/api/breads", fetcher)
+  const { data: breads = [] } = useSWR<Bread[]>("/api/breads", fetcher)
   const [q, setQ] = useState("")
-  const [filters, setFilters] = useState({ fermentation: "", texture: "", origin: "", category: "" })
+  const [filters, setFilters] = useState({ fermentation: "", texture: "", origin: "", category: "" } as const)
 
   const filtered = useMemo(() => {
-    return (breads as any[]).filter((b) => {
+    type FilterKey = keyof typeof filters
+    return (breads as Bread[]).filter((b) => {
       const matchQ = q
-        ? [b.name, b.ingredients, b.origin].some((f) => (f || "").toLowerCase().includes(q.toLowerCase()))
+        ? [b.name, b.ingredients, b.origin].some((f) => (f ?? "").toLowerCase().includes(q.toLowerCase()))
         : true
-      const match = (key: keyof typeof filters) =>
-        !filters[key] || ((b[key] || "").toLowerCase().includes(filters[key as any].toLowerCase()))
+      const match = <K extends FilterKey>(key: K) =>
+        !filters[key] || ((b[key] ?? "").toLowerCase().includes(filters[key].toLowerCase()))
       return matchQ && match("fermentation") && match("texture") && match("origin") && match("category")
     })
   }, [breads, q, filters])
@@ -43,11 +54,10 @@ export default function CatalogPage() {
         <Input placeholder="국가" value={filters.origin} onChange={(e) => setFilters({ ...filters, origin: e.target.value })} />
       </div>
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        {filtered.map((b: any) => (
+        {filtered.map((b: Bread) => (
           <BreadCard key={b.id} bread={b} />
         ))}
       </div>
     </div>
   )
 }
-
