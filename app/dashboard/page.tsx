@@ -1,8 +1,22 @@
 import { prisma } from "@/db/client"
+import type { BreadDTO } from "@/types/models"
 
 export default async function DashboardPage() {
-  const breads = await prisma.bread.findMany()
-  const counts = breads.reduce((acc: Record<string, number>, b) => {
+  const breads: BreadDTO[] = await prisma.bread.findMany({
+    select: {
+      id: true,
+      name: true,
+      origin: true,
+      fermentation: true,
+      texture: true,
+      category: true,
+      ingredients: true,
+      description: true,
+      imageUrl: true,
+      status: true,
+    },
+  })
+  const counts = breads.reduce((acc: Record<string, number>, b: BreadDTO) => {
     const c = (b.origin || "Unknown").trim()
     acc[c] = (acc[c] || 0) + (b.status === "completed" ? 1 : 0)
     return acc
@@ -11,7 +25,7 @@ export default async function DashboardPage() {
   const total = breads.length
   const completed = breads.filter((b) => b.status === "completed").length
 
-  const byYear = breads.reduce((acc: Record<string, number>, b) => {
+  const byYear = breads.reduce((acc: Record<string, number>, b: BreadDTO) => {
     if (b.completedAt) {
       const y = String(new Date(b.completedAt).getFullYear())
       acc[y] = (acc[y] || 0) + 1
