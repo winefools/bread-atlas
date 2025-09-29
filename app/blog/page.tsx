@@ -2,7 +2,12 @@ import { prisma } from "@/db/client"
 export const dynamic = 'force-dynamic'
 
 export default async function BlogPage() {
-  const posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } })
+  let posts: PostItem[] = []
+  try {
+    posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } })
+  } catch (_) {
+    posts = []
+  }
   type PostItem = typeof posts[number]
   return (
     <div className="space-y-4">

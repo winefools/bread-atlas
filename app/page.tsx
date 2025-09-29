@@ -4,8 +4,14 @@ import { prisma } from "@/db/client"
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const total = await prisma.bread.count()
-  const completed = await prisma.bread.count({ where: { status: "completed" } })
+  let total = 0
+  let completed = 0
+  try {
+    total = await prisma.bread.count()
+    completed = await prisma.bread.count({ where: { status: "completed" } })
+  } catch (_) {
+    // DB not configured: show zeros
+  }
   const target = 200
 
   return (

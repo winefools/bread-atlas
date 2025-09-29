@@ -3,20 +3,25 @@ export const dynamic = 'force-dynamic'
 import type { BreadDTO } from "@/types/models"
 
 export default async function DashboardPage() {
-  const breads: BreadDTO[] = await prisma.bread.findMany({
-    select: {
-      id: true,
-      name: true,
-      origin: true,
-      fermentation: true,
-      texture: true,
-      category: true,
-      ingredients: true,
-      description: true,
-      imageUrl: true,
-      status: true,
-    },
-  })
+  let breads: BreadDTO[] = []
+  try {
+    breads = await prisma.bread.findMany({
+      select: {
+        id: true,
+        name: true,
+        origin: true,
+        fermentation: true,
+        texture: true,
+        category: true,
+        ingredients: true,
+        description: true,
+        imageUrl: true,
+        status: true,
+      },
+    })
+  } catch (_) {
+    breads = []
+  }
   const counts = breads.reduce((acc: Record<string, number>, b: BreadDTO) => {
     const c = (b.origin || "Unknown").trim()
     acc[c] = (acc[c] || 0) + (b.status === "completed" ? 1 : 0)
