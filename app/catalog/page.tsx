@@ -4,20 +4,9 @@ import { useMemo, useState } from "react"
 import BreadCard from "@/components/BreadCard"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
+import type { BreadDTO } from "@/types/models"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
-
-type Bread = {
-  id: number
-  name: string
-  origin?: string | null
-  fermentation?: string | null
-  texture?: string | null
-  category?: string | null
-  ingredients?: string | null
-  imageUrl?: string | null
-  status: string
-}
 
 type Filters = {
   fermentation: string
@@ -27,20 +16,20 @@ type Filters = {
 }
 
 export default function CatalogPage() {
-  const { data: breads = [] } = useSWR<Bread[]>("/api/breads", fetcher)
+  const { data: breads = [] } = useSWR<BreadDTO[]>("/api/breads", fetcher)
   const [q, setQ] = useState("")
   const [filters, setFilters] = useState<Filters>({ fermentation: "", texture: "", origin: "", category: "" })
 
   const filtered = useMemo(() => {
     type FilterKey = keyof Filters
-    return (breads as Bread[]).filter((b) => {
+    return (breads as BreadDTO[]).filter((b) => {
       const matchQ = q
         ? [b.name, b.ingredients, b.origin].some((f) => (f ?? "").toLowerCase().includes(q.toLowerCase()))
         : true
       const match = (key: FilterKey) => {
         const needle = filters[key]
         if (!needle) return true
-        const hay = (b[key as keyof Bread] ?? "") as string
+        const hay = (b[key as keyof BreadDTO] ?? "") as string
         return hay.toLowerCase().includes(needle.toLowerCase())
       }
       return matchQ && match("fermentation") && match("texture") && match("origin") && match("category")
@@ -67,7 +56,7 @@ export default function CatalogPage() {
         <Input placeholder="국가" value={filters.origin} onChange={(e) => setFilters({ ...filters, origin: e.target.value })} />
       </div>
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        {filtered.map((b: Bread) => (
+        {filtered.map((b: BreadDTO) => (
           <BreadCard key={b.id} bread={b} />
         ))}
       </div>
