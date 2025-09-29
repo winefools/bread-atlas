@@ -82,6 +82,24 @@ export default function AdminPage() {
     }
   }
 
+  const createPost = async () => {
+    const res = await fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: postTitle, content: postContent })
+    })
+    if (res.ok) {
+      setPostTitle('')
+      setPostContent('')
+      mutatePosts()
+    }
+  }
+
+  const deletePost = async (id: number) => {
+    const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' })
+    if (res.ok) mutatePosts()
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -141,15 +159,6 @@ export default function AdminPage() {
       <section className="space-y-2">
         <h2 className="font-semibold">빵 목록</h2>
         <div className="grid gap-3">
-  const createPost = async () => {
-    const res = await fetch('/api/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: postTitle, content: postContent }) })
-    if (res.ok) { setPostTitle(''); setPostContent(''); mutatePosts() }
-  }
-
-  const deletePost = async (id: number) => {
-    const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' })
-    if (res.ok) mutatePosts()
-  }
           {breads.map((b) => (
             <div key={b.id} className="border rounded-lg p-3 flex items-center justify-between">
               <div className="text-sm">
