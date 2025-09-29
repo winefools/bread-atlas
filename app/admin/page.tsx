@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase-client"
+import type { BreadDTO, PostDTO } from "@/types/models"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -24,8 +25,8 @@ type Bread = {
 }
 
 export default function AdminPage() {
-  const { data: breads = [], mutate } = useSWR<Bread[]>("/api/breads", fetcher)
-  const { data: posts = [], mutate: mutatePosts } = useSWR<any[]>("/api/posts", fetcher)
+  const { data: breads = [], mutate } = useSWR<BreadDTO[]>("/api/breads", fetcher)
+  const { data: posts = [], mutate: mutatePosts } = useSWR<PostDTO[]>("/api/posts", fetcher)
   const [form, setForm] = useState<Partial<Bread>>({ name: "" })
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -145,7 +146,7 @@ export default function AdminPage() {
         <Textarea placeholder="내용" value={postContent} onChange={(e) => setPostContent(e.target.value)} />
         <Button onClick={createPost} disabled={!postTitle}>작성</Button>
         <div className="space-y-2">
-          {posts.map((p) => (
+          {posts.map((p: PostDTO) => (
             <div key={p.id} className="border rounded p-2 flex items-center justify-between">
               <div className="text-sm"><span className="font-medium">{p.title}</span></div>
               <div className="flex gap-2">
@@ -159,7 +160,7 @@ export default function AdminPage() {
       <section className="space-y-2">
         <h2 className="font-semibold">빵 목록</h2>
         <div className="grid gap-3">
-          {breads.map((b) => (
+          {breads.map((b: BreadDTO) => (
             <div key={b.id} className="border rounded-lg p-3 flex items-center justify-between">
               <div className="text-sm">
                 <span className="font-medium">{b.name}</span>
