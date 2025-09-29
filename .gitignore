@@ -6,3 +6,7 @@ node_modules
 dist
 coverage
 
+# Local deploy helpers/keys (do not commit)
+.deploy_ssh
+.deploy_ssh.pub
+.git-askpass.sh

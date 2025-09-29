@@ -67,3 +67,29 @@ npm run dev
 ## 라우트 보호
 - `middleware.ts`가 `/admin/*` 접근 시 JWT 토큰을 검증, 미인증 사용자는 `/admin/login`으로 리다이렉트.
 - API는 별도로 관리자 권한을 검사하여 이중 방어.
+
+## Vercel 배포 가이드 (Step-by-step)
+1) GitHub 연결
+- Vercel Dashboard → New Project → `winefools/bread-atlas` 선택
+- Framework: Next.js 자동 감지, 기본 빌드/출력 설정 그대로 사용
+
+2) 환경변수 등록 (Project → Settings → Environment Variables)
+- NEXT_PUBLIC_SUPABASE_URL: 브라우저 공개 가능 URL (예: `https://YOUR_PROJECT.supabase.co`)
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: Supabase anon key (public)
+- SUPABASE_SERVICE_ROLE_KEY: Supabase service role key (server only)
+- SUPABASE_BUCKET: `bread-images` (권장)
+- JWT_SECRET: 충분히 긴 랜덤 문자열
+- ADMIN_PASSWORD: 강력한 관리자 비밀번호
+- DATABASE_URL: 프로덕션은 PostgreSQL URL 권장 (예: `postgres://...`)
+
+주의사항
+- `SUPABASE_SERVICE_ROLE_KEY`는 절대 `NEXT_PUBLIC_` 접두사를 사용하지 않습니다(클라이언트 노출 금지).
+- 미리보기/프로덕션 환경에 각각 필요한 변수를 설정하세요.
+
+3) 재배포
+- 환경변수 저장 후 Redeploy → 배포 URL에서 동작 확인
+
+4) CI/CD
+- `main`에 커밋을 푸시하면 Vercel이 자동으로 빌드/배포합니다.
+
+추가 설정이 필요한 경우(리다이렉트/헤더/지역/이미지 도메인), `vercel.json`을 추가할 수 있습니다. 필요 시 템플릿을 제공해드립니다.
