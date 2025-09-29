@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Bread {
+  id           Int      @id @default(autoincrement())
+  name         String
+  origin       String?
+  fermentation String? // e.g., yeast, sourdough, none
+  texture      String? // e.g., crusty, soft, chewy
+  category     String? // e.g., lean, enriched, laminated
+  ingredients  String? // CSV or text list
+  description  String?
+  imageUrl     String?
+  tags         String? // comma separated tags
+
+  // Research / progress
+  status       String   @default("planned") // planned|in_progress|completed
+  difficulty   Int?     // 1-5
+  tastingNotes String?
+  completedAt  DateTime?
+
+  // Advanced recipe fields (JSON)
+  bakersPercent            Json?
+  ingredientsFor1kgFlourG  Json?
+  processSteps             Json?
+  bakeParams               Json?
+  notes                    Json?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,5 @@
+name,origin,fermentation,texture,category,ingredients,description,image_url
+바게트,France,yeast,crusty,lean,"밀가루, 물, 이스트, 소금","긴 바형태의 프랑스 빵",https://images.unsplash.com/photo-1549931319-a545dcf3bc73?q=80&w=1200
+치아바타,Italy,yeast,chewy,lean,"밀가루, 물, 이스트, 소금, 올리브오일","수분이 높은 이탈리아식 편평빵",https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=1200
+포카치아,Italy,yeast,soft,enriched,"밀가루, 물, 이스트, 소금, 올리브오일, 허브","올리브오일과 허브향의 판형빵",https://images.unsplash.com/photo-1604908176997-43102e0d21d9?q=80&w=1200
+

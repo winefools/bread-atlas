@@ -1,0 +1,9 @@
+name,origin,fermentation,texture,category,ingredients,description,image_url
+식빵,Japan,yeast,soft,enriched,"강력분, 물, 이스트, 설탕, 소금, 버터","샌드위치용 기본 식빵",
+브리오슈,France,yeast,soft,enriched,"밀가루, 계란, 버터, 설탕, 이스트, 소금","버터와 달걀 풍미의 풍부한 빵",
+크루아상,France,yeast,crusty,laminated,"밀가루, 버터, 이스트, 설탕, 소금, 우유","겹겹이 층이 있는 페이스트리",
+단팥빵,Japan,yeast,soft,enriched,"밀가루, 팥앙금, 이스트, 설탕, 소금, 버터","팥소가 들어간 달콤한 빵",
+소보로빵,Korea,yeast,soft,enriched,"밀가루, 이스트, 설탕, 소금, 버터, 소보로토핑","고소한 소보로 토핑의 빵",
+베이글,Poland,yeast,chewy,boiled,"밀가루, 물, 이스트, 소금, 설탕","끓인 후 구워 쫄깃한 식감",
+프레첼,Germany,yeast,chewy,boiled,"밀가루, 물, 이스트, 소금, 설탕","매듭 모양의 독일 빵",
+
