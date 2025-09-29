@@ -1,27 +1,23 @@
-import type { Prisma } from "@prisma/client"
+// Minimal shapes used by the UI and APIs (kept in sync with Prisma schema)
+export type BreadDTO = {
+  id: number
+  name: string
+  origin: string | null
+  fermentation: string | null
+  texture: string | null
+  category: string | null
+  ingredients: string | null
+  description: string | null
+  imageUrl: string | null
+  status: string
+  createdAt?: string | Date
+  updatedAt?: string | Date
+  completedAt?: string | Date | null
+}
 
-// Minimal shapes used by the UI and APIs
-export type BreadDTO = Prisma.BreadGetPayload<{
-  select: {
-    id: true
-    name: true
-    origin: true
-    fermentation: true
-    texture: true
-    category: true
-    ingredients: true
-    description: true
-    imageUrl: true
-    status: true
-  }
-}>
-
-export type PostDTO = Prisma.PostGetPayload<{
-  select: {
-    id: true
-    title: true
-    content: true
-    createdAt: true
-  }
-}>
-
+export type PostDTO = {
+  id: number
+  title: string
+  content: string
+  createdAt: string | Date
+}

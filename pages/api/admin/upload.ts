@@ -11,8 +11,8 @@ export const config = {
 
 function readStream(req: NextApiRequest): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = []
-    req.on("data", (c) => chunks.push(Buffer.from(c)))
+    const chunks: Uint8Array[] = []
+    req.on("data", (c: any) => chunks.push(new Uint8Array(c)))
     req.on("end", () => resolve(Buffer.concat(chunks)))
     req.on("error", reject)
   })
@@ -54,4 +54,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: e.message })
   }
 }
-

@@ -6,12 +6,12 @@ import { randomUUID } from "crypto"
 
 export const config = { api: { bodyParser: false } }
 
-function parseForm(req: NextApiRequest): Promise<{ file?: formidable.File; contentType?: string }>
+function parseForm(req: NextApiRequest): Promise<{ file?: any; contentType?: string }>
 { return new Promise((resolve, reject) => {
-    const form = formidable({ multiples: false, keepExtensions: true })
-    form.parse(req, (err, _fields, files) => {
+  const form = formidable({ multiples: false, keepExtensions: true })
+    form.parse(req, (err: any, _fields: any, files: any) => {
       if (err) return reject(err)
-      const file = (files.file || files.image || Object.values(files)[0]) as formidable.File | undefined
+      const file = (files.file || files.image || Object.values(files)[0]) as any
       resolve({ file, contentType: file?.mimetype })
     })
   })
@@ -38,4 +38,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: e.message })
   }
 }
-
