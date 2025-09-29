@@ -1,19 +1,19 @@
 export const dynamic = 'force-dynamic'
+import type { PostDTO } from "@/types/models"
 
 export default async function BlogPage() {
-  let posts: PostItem[] = []
+  let posts: PostDTO[] = []
   try {
     const { prisma } = await import("@/db/client")
     posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } })
   } catch (_) {
     posts = []
   }
-  type PostItem = typeof posts[number]
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">Blog / Notes</h1>
       <div className="space-y-3">
-        {posts.map((p: PostItem) => (
+        {posts.map((p: PostDTO) => (
           <article key={p.id} className="border rounded-lg p-4">
             <h2 className="font-semibold">{p.title}</h2>
             <p className="text-sm text-gray-700 whitespace-pre-wrap">{p.content}</p>
