@@ -1,4 +1,5 @@
 import { prisma } from "@/db/client"
+export const dynamic = 'force-dynamic'
 import type { BreadDTO } from "@/types/models"
 
 export default async function DashboardPage() {
