@@ -17,19 +17,30 @@ type Bread = {
   ingredients?: string | null
 }
 
+type Filters = {
+  fermentation: string
+  texture: string
+  origin: string
+  category: string
+}
+
 export default function CatalogPage() {
   const { data: breads = [] } = useSWR<Bread[]>("/api/breads", fetcher)
   const [q, setQ] = useState("")
-  const [filters, setFilters] = useState({ fermentation: "", texture: "", origin: "", category: "" } as const)
+  const [filters, setFilters] = useState<Filters>({ fermentation: "", texture: "", origin: "", category: "" })
 
   const filtered = useMemo(() => {
-    type FilterKey = keyof typeof filters
+    type FilterKey = keyof Filters
     return (breads as Bread[]).filter((b) => {
       const matchQ = q
         ? [b.name, b.ingredients, b.origin].some((f) => (f ?? "").toLowerCase().includes(q.toLowerCase()))
         : true
-      const match = <K extends FilterKey>(key: K) =>
-        !filters[key] || ((b[key] ?? "").toLowerCase().includes(filters[key].toLowerCase()))
+      const match = (key: FilterKey) => {
+        const needle = filters[key]
+        if (!needle) return true
+        const hay = (b[key as keyof Bread] ?? "") as string
+        return hay.toLowerCase().includes(needle.toLowerCase())
+      }
       return matchQ && match("fermentation") && match("texture") && match("origin") && match("category")
     })
   }, [breads, q, filters])
